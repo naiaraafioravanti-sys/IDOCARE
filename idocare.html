@@ -1,0 +1,1210 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>IdoCare</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --purple: #6B21A8;
+    --purple-mid: #7C3AED;
+    --purple-light: #EDE9FE;
+    --purple-soft: #F5F3FF;
+    --accent: #A855F7;
+    --pink: #EC4899;
+    --text: #1C1C2E;
+    --text-soft: #6B7280;
+    --border: #E5E7EB;
+    --white: #FFFFFF;
+    --bg: #F8F7FC;
+    --success: #10B981;
+    --danger: #EF4444;
+    --card-shadow: 0 2px 12px rgba(107,33,168,0.08);
+    --screen-w: 390px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: #1a0a2e;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+
+  /* Phone shell */
+  .phone {
+    width: var(--screen-w);
+    height: 844px;
+    background: var(--bg);
+    border-radius: 44px;
+    overflow: hidden;
+    position: relative;
+    box-shadow:
+      0 0 0 10px #0d0018,
+      0 0 0 12px #2a0a4a,
+      0 40px 80px rgba(0,0,0,0.7);
+  }
+
+  /* Screens */
+  .screen {
+    position: absolute;
+    inset: 0;
+    background: var(--bg);
+    display: none;
+    flex-direction: column;
+    overflow-y: auto;
+    overflow-x: hidden;
+    animation: fadeIn 0.25s ease;
+  }
+  .screen.active { display: flex; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateX(18px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+  @keyframes fadeInLeft {
+    from { opacity: 0; transform: translateX(-18px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+  .screen.back-anim { animation: fadeInLeft 0.25s ease; }
+
+  /* ── TOP BAR ── */
+  .topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 52px 24px 16px;
+    background: var(--white);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    border-bottom: 1px solid var(--border);
+  }
+  .topbar-logo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'DM Serif Display', serif;
+    font-size: 18px;
+    color: var(--purple);
+  }
+  .topbar-logo .icon-heart {
+    width: 30px; height: 30px;
+    background: var(--purple);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .topbar-logo .icon-heart svg { width: 16px; height: 16px; fill: white; }
+  .topbar-back {
+    display: flex; align-items: center; gap: 4px;
+    font-size: 14px; color: var(--purple); cursor: pointer;
+    font-weight: 500; background: none; border: none; padding: 4px;
+  }
+  .topbar-back svg { width: 18px; height: 18px; stroke: var(--purple); fill: none; }
+  .topbar-user {
+    font-size: 13px; color: var(--text-soft);
+    display: flex; align-items: center; gap: 6px;
+  }
+  .topbar-exit {
+    font-size: 13px; color: var(--text-soft);
+    background: none; border: none; cursor: pointer;
+    display: flex; align-items: center; gap: 4px;
+  }
+  .topbar-exit svg { width: 16px; height: 16px; stroke: var(--text-soft); fill: none; }
+
+  /* ── AUTH SCREEN ── */
+  #screen-auth {
+    background: var(--white);
+    justify-content: flex-start;
+    align-items: center;
+  }
+  .auth-hero {
+    width: 100%; padding: 64px 0 32px;
+    display: flex; flex-direction: column; align-items: center; gap: 10px;
+    background: linear-gradient(160deg, var(--purple-soft) 0%, var(--white) 100%);
+  }
+  .auth-logo-circle {
+    width: 72px; height: 72px;
+    background: var(--purple);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 8px 24px rgba(107,33,168,0.3);
+  }
+  .auth-logo-circle svg { width: 36px; height: 36px; fill: white; }
+  .auth-brand {
+    font-family: 'DM Serif Display', serif;
+    font-size: 28px; color: var(--purple);
+  }
+  .auth-tagline { font-size: 13px; color: var(--text-soft); }
+
+  .auth-card {
+    width: calc(100% - 32px);
+    background: var(--white);
+    border-radius: 20px;
+    padding: 24px;
+    margin: 0 16px;
+    box-shadow: var(--card-shadow);
+    border: 1px solid var(--border);
+  }
+  .auth-welcome { font-size: 15px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+  .auth-sub { font-size: 13px; color: var(--text-soft); margin-bottom: 20px; }
+
+  .tab-row {
+    display: flex; background: var(--border); border-radius: 10px;
+    padding: 3px; margin-bottom: 20px;
+  }
+  .tab-btn {
+    flex: 1; padding: 8px; border: none; background: none;
+    border-radius: 8px; font-size: 14px; font-weight: 500;
+    cursor: pointer; color: var(--text-soft); transition: all 0.2s;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .tab-btn.active {
+    background: var(--white);
+    color: var(--purple);
+    box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+  }
+
+  /* ── FORM ELEMENTS ── */
+  .field { margin-bottom: 14px; }
+  .field label { display: block; font-size: 13px; font-weight: 500; color: var(--text); margin-bottom: 5px; }
+  .field input {
+    width: 100%; padding: 11px 14px;
+    border: 1.5px solid var(--border);
+    border-radius: 10px; font-size: 14px;
+    color: var(--text); background: var(--white);
+    font-family: 'DM Sans', sans-serif;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    outline: none;
+  }
+  .field input:focus {
+    border-color: var(--purple-mid);
+    box-shadow: 0 0 0 3px rgba(124,58,237,0.1);
+  }
+  .field input::placeholder { color: #C4C4CF; }
+
+  .btn-primary {
+    width: 100%; padding: 13px;
+    background: var(--purple);
+    color: white; border: none; border-radius: 12px;
+    font-size: 15px; font-weight: 600;
+    cursor: pointer; font-family: 'DM Sans', sans-serif;
+    transition: background 0.2s, transform 0.1s, box-shadow 0.2s;
+    box-shadow: 0 4px 14px rgba(107,33,168,0.35);
+  }
+  .btn-primary:hover { background: var(--purple-mid); }
+  .btn-primary:active { transform: scale(0.98); }
+
+  .btn-secondary {
+    width: 100%; padding: 12px;
+    background: none; color: var(--purple);
+    border: 1.5px solid var(--purple-light);
+    border-radius: 12px; font-size: 14px; font-weight: 500;
+    cursor: pointer; font-family: 'DM Sans', sans-serif;
+    transition: background 0.2s;
+  }
+  .btn-secondary:hover { background: var(--purple-soft); }
+
+  .divider {
+    display: flex; align-items: center; gap: 10px;
+    margin: 16px 0; color: var(--text-soft); font-size: 12px;
+  }
+  .divider::before, .divider::after {
+    content: ''; flex: 1; height: 1px; background: var(--border);
+  }
+
+  .anon-btn {
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    width: 100%; padding: 11px; background: none;
+    border: 1.5px dashed var(--border); border-radius: 12px;
+    font-size: 14px; color: var(--text-soft); cursor: pointer;
+    font-family: 'DM Sans', sans-serif; transition: all 0.2s;
+  }
+  .anon-btn:hover { border-color: var(--purple); color: var(--purple); }
+  .anon-btn svg { width: 16px; height: 16px; stroke: currentColor; fill: none; }
+
+  /* ── MAIN MENU ── */
+  #screen-menu { background: var(--bg); }
+  .menu-hero {
+    padding: 28px 24px 20px;
+    background: linear-gradient(135deg, var(--purple) 0%, #9333EA 100%);
+    color: white;
+  }
+  .menu-hero-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 28px; line-height: 1.2; margin-bottom: 8px;
+  }
+  .menu-hero-sub { font-size: 14px; opacity: 0.85; }
+
+  .stats-row {
+    display: flex; gap: 10px;
+    padding: 16px 16px 0;
+  }
+  .stat-pill {
+    flex: 1; background: white; border-radius: 14px;
+    padding: 12px 10px; text-align: center;
+    box-shadow: var(--card-shadow);
+  }
+  .stat-num {
+    font-family: 'DM Serif Display', serif;
+    font-size: 22px; color: var(--purple);
+  }
+  .stat-label { font-size: 11px; color: var(--text-soft); margin-top: 2px; }
+
+  .menu-cards { padding: 16px; display: flex; flex-direction: column; gap: 12px; }
+  .menu-card {
+    background: var(--white); border-radius: 18px;
+    padding: 20px; cursor: pointer;
+    box-shadow: var(--card-shadow); border: 1px solid var(--border);
+    display: flex; align-items: flex-start; gap: 16px;
+    transition: transform 0.15s, box-shadow 0.15s;
+  }
+  .menu-card:active { transform: scale(0.98); box-shadow: none; }
+  .menu-card-icon {
+    width: 48px; height: 48px; border-radius: 14px;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .menu-card-icon svg { width: 24px; height: 24px; }
+  .menu-card-icon.purple { background: var(--purple-light); }
+  .menu-card-icon.purple svg { stroke: var(--purple); fill: none; }
+  .menu-card-icon.pink { background: #FDF2F8; }
+  .menu-card-icon.pink svg { stroke: var(--pink); fill: none; }
+  .menu-card-icon.teal { background: #F0FDF4; }
+  .menu-card-icon.teal svg { stroke: #059669; fill: none; }
+  .menu-card-title { font-size: 16px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+  .menu-card-desc { font-size: 13px; color: var(--text-soft); line-height: 1.4; }
+  .menu-card-arrow { margin-left: auto; align-self: center; color: var(--border); }
+  .menu-card-arrow svg { width: 18px; height: 18px; stroke: var(--text-soft); fill: none; }
+
+  /* ── ADOPT LIST ── */
+  #screen-adopt-list { background: var(--bg); }
+  .search-bar {
+    padding: 12px 16px;
+    position: sticky; top: 73px; z-index: 9;
+    background: var(--bg);
+  }
+  .search-input-wrap {
+    display: flex; align-items: center; gap: 10px;
+    background: white; border-radius: 12px; padding: 10px 14px;
+    border: 1.5px solid var(--border);
+    box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+  }
+  .search-input-wrap svg { width: 16px; height: 16px; stroke: var(--text-soft); fill: none; flex-shrink: 0; }
+  .search-input-wrap input {
+    border: none; outline: none; font-size: 14px;
+    color: var(--text); width: 100%; background: none;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .search-input-wrap input::placeholder { color: #C4C4CF; }
+
+  .elder-list { padding: 0 16px 24px; display: flex; flex-direction: column; gap: 12px; }
+  .elder-card {
+    background: white; border-radius: 18px; overflow: hidden;
+    box-shadow: var(--card-shadow); border: 1px solid var(--border);
+    cursor: pointer; transition: transform 0.15s;
+    display: flex; align-items: stretch;
+  }
+  .elder-card:active { transform: scale(0.98); }
+  .elder-card-img {
+    width: 90px; height: 110px; object-fit: cover;
+    background: linear-gradient(135deg, #DDD6FE, #C4B5FD);
+    flex-shrink: 0; display: flex; align-items: center; justify-content: center;
+    font-size: 32px;
+  }
+  .elder-card-body { padding: 14px 14px 14px; flex: 1; }
+  .elder-card-name { font-size: 15px; font-weight: 600; color: var(--text); }
+  .elder-card-age { font-size: 12px; color: var(--text-soft); margin-bottom: 8px; }
+  .tags { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 6px; }
+  .tag {
+    font-size: 11px; padding: 3px 8px; border-radius: 20px;
+    font-weight: 500;
+  }
+  .tag.red { background: #FEF2F2; color: var(--danger); }
+  .tag.blue { background: #EFF6FF; color: #2563EB; }
+  .tag.green { background: #F0FDF4; color: #059669; }
+  .tag.purple { background: var(--purple-light); color: var(--purple); }
+  .elder-needs-label { font-size: 11px; color: var(--text-soft); }
+  .elder-adopted-badge {
+    position: absolute; top: 10px; right: 10px;
+    background: var(--success); color: white;
+    font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 20px;
+  }
+  .elder-card-wrap { position: relative; }
+  .btn-detail {
+    display: inline-flex; align-items: center; gap: 4px;
+    margin-top: 8px; font-size: 12px; font-weight: 600;
+    color: var(--purple); background: var(--purple-soft);
+    border: none; padding: 5px 12px; border-radius: 20px; cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+  }
+
+  /* ── ELDER DETAIL ── */
+  #screen-elder-detail { background: var(--bg); }
+  .elder-hero {
+    width: 100%; height: 220px;
+    background: linear-gradient(160deg, #DDD6FE 0%, #C4B5FD 100%);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 80px; position: relative;
+  }
+  .elder-detail-body { padding: 20px 20px 32px; }
+  .elder-detail-name {
+    font-family: 'DM Serif Display', serif;
+    font-size: 26px; color: var(--purple); margin-bottom: 2px;
+  }
+  .elder-detail-age { font-size: 14px; color: var(--text-soft); margin-bottom: 12px; }
+  .elder-bio {
+    font-size: 14px; color: var(--text-soft); line-height: 1.6;
+    margin-bottom: 20px; padding: 14px; background: white;
+    border-radius: 12px; border: 1px solid var(--border);
+  }
+  .section-title {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 14px; font-weight: 600; color: var(--text);
+    margin-bottom: 10px;
+  }
+  .section-title svg { width: 16px; height: 16px; stroke: var(--purple); fill: none; }
+  .detail-section {
+    background: white; border-radius: 14px; padding: 16px;
+    margin-bottom: 12px; border: 1px solid var(--border);
+  }
+  .med-list { list-style: none; }
+  .med-list li {
+    font-size: 14px; color: var(--text); padding: 4px 0;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .med-list li::before {
+    content: ''; width: 6px; height: 6px; border-radius: 50%;
+    background: var(--purple); flex-shrink: 0;
+  }
+
+  /* ── HELP ASILO ── */
+  #screen-help { background: var(--bg); }
+  .help-header {
+    padding: 20px 20px 0;
+  }
+  .help-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 26px; color: var(--purple); margin-bottom: 6px;
+  }
+  .help-sub { font-size: 14px; color: var(--text-soft); margin-bottom: 20px; }
+
+  .tab-row-alt {
+    display: flex; background: var(--border); border-radius: 10px;
+    padding: 3px; margin-bottom: 20px;
+  }
+  .tab-row-alt .tab-btn { font-size: 13px; }
+
+  .pix-card {
+    background: white; border-radius: 18px; padding: 20px;
+    margin: 0 16px 12px; box-shadow: var(--card-shadow);
+    border: 1px solid var(--border);
+  }
+  .pix-card-title { font-size: 15px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+  .pix-card-sub { font-size: 13px; color: var(--text-soft); margin-bottom: 16px; }
+
+  .qr-placeholder {
+    width: 140px; height: 140px; margin: 0 auto 16px;
+    border: 2px solid var(--border); border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    background: var(--purple-soft);
+  }
+  .qr-placeholder svg { width: 80px; height: 80px; stroke: var(--purple); fill: none; opacity: 0.5; }
+
+  .pix-key-row {
+    display: flex; align-items: center; gap: 8px;
+    background: var(--bg); border-radius: 10px; padding: 10px 12px;
+    margin-bottom: 12px;
+  }
+  .pix-key { font-size: 13px; color: var(--text); flex: 1; }
+  .copy-btn {
+    background: none; border: none; cursor: pointer; padding: 4px;
+    color: var(--purple);
+  }
+  .copy-btn svg { width: 16px; height: 16px; stroke: currentColor; fill: none; }
+
+  .anon-check {
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 16px; cursor: pointer;
+  }
+  .anon-check input { accent-color: var(--purple); width: 16px; height: 16px; cursor: pointer; }
+  .anon-check span { font-size: 13px; color: var(--text-soft); }
+
+  .info-box {
+    background: var(--purple-soft); border-radius: 12px; padding: 14px;
+    border-left: 3px solid var(--purple);
+  }
+  .info-box p { font-size: 13px; color: var(--purple); line-height: 1.5; }
+  .info-box p::before { content: '💜 '; }
+
+  .items-grid { display: flex; flex-direction: column; gap: 10px; padding: 0 16px 24px; }
+  .item-row {
+    display: flex; align-items: center; justify-content: space-between;
+    background: white; border-radius: 14px; padding: 14px 16px;
+    border: 1px solid var(--border); box-shadow: var(--card-shadow);
+  }
+  .item-row-left { display: flex; align-items: center; gap: 12px; }
+  .item-icon {
+    width: 40px; height: 40px; border-radius: 12px;
+    background: var(--purple-light); display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+  }
+  .item-name { font-size: 14px; font-weight: 600; color: var(--text); }
+  .item-sub { font-size: 12px; color: var(--text-soft); }
+  .item-donate-btn {
+    background: var(--purple); color: white;
+    border: none; border-radius: 10px; padding: 8px 14px;
+    font-size: 12px; font-weight: 600; cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+  }
+
+  /* ── SCHEDULE ── */
+  #screen-schedule { background: var(--bg); }
+  .schedule-header { padding: 20px 20px 0; }
+  .schedule-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 26px; color: var(--purple); margin-bottom: 6px;
+  }
+  .schedule-sub { font-size: 14px; color: var(--text-soft); margin-bottom: 16px; }
+
+  .calendar-card {
+    background: white; border-radius: 18px; padding: 18px;
+    margin: 0 16px 12px; box-shadow: var(--card-shadow);
+    border: 1px solid var(--border);
+  }
+  .cal-label { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 12px; }
+  .cal-nav {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 14px;
+  }
+  .cal-nav-btn {
+    background: none; border: none; cursor: pointer; padding: 4px;
+    border-radius: 8px; display: flex; align-items: center; justify-content: center;
+  }
+  .cal-nav-btn svg { width: 18px; height: 18px; stroke: var(--purple); fill: none; }
+  .cal-month { font-size: 14px; font-weight: 600; color: var(--text); }
+  .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+  .cal-day-name { text-align: center; font-size: 11px; color: var(--text-soft); font-weight: 500; padding: 4px 0; }
+  .cal-day {
+    text-align: center; font-size: 13px; padding: 6px 2px;
+    border-radius: 8px; cursor: pointer; color: var(--text);
+    transition: background 0.15s;
+  }
+  .cal-day:hover { background: var(--purple-light); color: var(--purple); }
+  .cal-day.other { color: var(--border); cursor: default; }
+  .cal-day.other:hover { background: none; }
+  .cal-day.selected { background: var(--purple); color: white; font-weight: 600; }
+  .cal-day.today { font-weight: 700; color: var(--purple); }
+
+  .visit-form {
+    background: white; border-radius: 18px; padding: 18px;
+    margin: 0 16px 12px; box-shadow: var(--card-shadow);
+    border: 1px solid var(--border);
+  }
+  .visit-form-title { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 14px; }
+  .select-field {
+    width: 100%; padding: 11px 14px;
+    border: 1.5px solid var(--border); border-radius: 10px;
+    font-size: 14px; color: var(--text);
+    background: white url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236B7280' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E") no-repeat right 14px center;
+    appearance: none; cursor: pointer;
+    font-family: 'DM Sans', sans-serif; outline: none;
+    margin-bottom: 12px;
+    transition: border-color 0.2s;
+  }
+  .select-field:focus { border-color: var(--purple-mid); }
+
+  .anon-check-visit {
+    display: flex; align-items: flex-start; gap: 10px;
+    margin-bottom: 16px; cursor: pointer;
+  }
+  .anon-check-visit input { accent-color: var(--purple); width: 16px; height: 16px; margin-top: 2px; cursor: pointer; }
+  .anon-check-visit span { font-size: 13px; color: var(--text-soft); line-height: 1.4; }
+
+  .info-card {
+    background: var(--purple-soft); border-radius: 14px; padding: 16px;
+    margin: 0 16px 24px;
+  }
+  .info-card-title { font-size: 14px; font-weight: 600; color: var(--purple); margin-bottom: 10px; }
+  .info-card ul { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+  .info-card ul li {
+    font-size: 13px; color: var(--text-soft); padding-left: 14px; position: relative;
+  }
+  .info-card ul li::before {
+    content: '•'; position: absolute; left: 0; color: var(--purple);
+  }
+
+  /* ── SUCCESS / TOAST ── */
+  .toast {
+    position: fixed; bottom: 32px; left: 50%; transform: translateX(-50%);
+    background: var(--text); color: white; padding: 12px 20px;
+    border-radius: 12px; font-size: 14px; font-weight: 500;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.3); z-index: 100;
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.3s; white-space: nowrap;
+  }
+  .toast.show { opacity: 1; }
+
+  /* ── CONFIRMATION SCREEN ── */
+  #screen-confirm {
+    align-items: center; justify-content: center;
+    background: var(--white); text-align: center; padding: 32px;
+  }
+  .confirm-icon {
+    width: 80px; height: 80px; background: #F0FDF4;
+    border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 20px;
+  }
+  .confirm-icon svg { width: 40px; height: 40px; stroke: var(--success); fill: none; stroke-width: 2.5; }
+  .confirm-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 24px; color: var(--text); margin-bottom: 10px;
+  }
+  .confirm-sub { font-size: 14px; color: var(--text-soft); line-height: 1.6; margin-bottom: 32px; }
+
+  /* scrollbar */
+  .screen::-webkit-scrollbar { width: 3px; }
+  .screen::-webkit-scrollbar-thumb { background: var(--purple-light); border-radius: 10px; }
+
+  /* helper */
+  .px-16 { padding-left: 16px; padding-right: 16px; }
+  .mt-8 { margin-top: 8px; }
+  .mb-0 { margin-bottom: 0; }
+</style>
+</head>
+<body>
+
+<div class="phone">
+
+  <!-- ══════════════════════════════════════ -->
+  <!-- SCREEN: AUTH                           -->
+  <!-- ══════════════════════════════════════ -->
+  <div class="screen active" id="screen-auth">
+    <div class="auth-hero">
+      <div class="auth-logo-circle">
+        <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+      </div>
+      <div class="auth-brand">IdoCare</div>
+      <div class="auth-tagline">Cuidando com amor e dedicação</div>
+    </div>
+
+    <div style="padding: 20px 16px; flex:1; display:flex; flex-direction:column; gap:12px;">
+      <div class="auth-card">
+        <div class="auth-welcome">Bem-vindo</div>
+        <div class="auth-sub">Entre ou cadastre-se para ajudar nossos idosos</div>
+
+        <div class="tab-row">
+          <button class="tab-btn active" id="tab-login" onclick="switchTab('login')">Login</button>
+          <button class="tab-btn" id="tab-cadastro" onclick="switchTab('cadastro')">Cadastro</button>
+        </div>
+
+        <div id="form-login">
+          <div class="field">
+            <label>Email</label>
+            <input type="email" placeholder="seu@email.com" id="login-email">
+          </div>
+          <div class="field">
+            <label>Senha</label>
+            <input type="password" placeholder="••••••••" id="login-senha">
+          </div>
+          <button class="btn-primary" onclick="doLogin()">Entrar</button>
+        </div>
+
+        <div id="form-cadastro" style="display:none;">
+          <div class="field">
+            <label>Nome Completo</label>
+            <input type="text" placeholder="Seu nome" id="cad-nome">
+          </div>
+          <div class="field">
+            <label>Email</label>
+            <input type="email" placeholder="seu@email.com" id="cad-email">
+          </div>
+          <div class="field mb-0">
+            <label>Senha</label>
+            <input type="password" placeholder="••••••••" id="cad-senha">
+          </div>
+          <br>
+          <button class="btn-primary" onclick="doCadastro()">Cadastrar</button>
+        </div>
+
+        <div class="divider">ou</div>
+        <button class="anon-btn" onclick="goAnon()">
+          <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          Entrar como Anônimo
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════ -->
+  <!-- SCREEN: MENU                           -->
+  <!-- ══════════════════════════════════════ -->
+  <div class="screen" id="screen-menu">
+    <div class="topbar">
+      <div class="topbar-logo">
+        <div class="icon-heart">
+          <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        </div>
+        IdoCare
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <span class="topbar-user" id="menu-user-label">Usuário</span>
+        <button class="topbar-exit" onclick="goBack('screen-auth')">
+          <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+          Sair
+        </button>
+      </div>
+    </div>
+
+    <div class="menu-hero">
+      <div class="menu-hero-title">Bem-vindo ao<br>IdoCare</div>
+      <div class="menu-hero-sub">Juntos podemos fazer a diferença na vida de nossos idosos. Escolha como você gostaria de ajudar hoje.</div>
+    </div>
+
+    <div class="stats-row">
+      <div class="stat-pill">
+        <div class="stat-num">50+</div>
+        <div class="stat-label">Idosos Assistidos</div>
+      </div>
+      <div class="stat-pill">
+        <div class="stat-num">200+</div>
+        <div class="stat-label">Doadores Ativos</div>
+      </div>
+      <div class="stat-pill">
+        <div class="stat-num">1000+</div>
+        <div class="stat-label">Doações Realizadas</div>
+      </div>
+    </div>
+
+    <div class="menu-cards">
+      <div class="menu-card" onclick="navigate('screen-adopt-list')">
+        <div class="menu-card-icon purple">
+          <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        </div>
+        <div>
+          <div class="menu-card-title">Adote um Idoso</div>
+          <div class="menu-card-desc">Conheça nossos idosos e faça a diferença diretamente na vida de alguém especial</div>
+        </div>
+        <div class="menu-card-arrow"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></div>
+      </div>
+
+      <div class="menu-card" onclick="navigate('screen-help')">
+        <div class="menu-card-icon pink">
+          <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        </div>
+        <div>
+          <div class="menu-card-title">Ajudar o Asilo</div>
+          <div class="menu-card-desc">Faça doações gerais para manter e melhorar a estrutura do asilo</div>
+        </div>
+        <div class="menu-card-arrow"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></div>
+      </div>
+
+      <div class="menu-card" onclick="navigate('screen-schedule')">
+        <div class="menu-card-icon teal">
+          <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        </div>
+        <div>
+          <div class="menu-card-title">Agendar Visita</div>
+          <div class="menu-card-desc">Agende um horário para visitar nossos idosos e trazer alegria ao dia deles</div>
+        </div>
+        <div class="menu-card-arrow"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════ -->
+  <!-- SCREEN: ADOPT LIST                     -->
+  <!-- ══════════════════════════════════════ -->
+  <div class="screen" id="screen-adopt-list">
+    <div class="topbar">
+      <button class="topbar-back" onclick="goBack('screen-menu')">
+        <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+        Voltar
+      </button>
+      <div class="topbar-logo">
+        <div class="icon-heart">
+          <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        </div>
+        IdoCare
+      </div>
+      <div style="width:60px;"></div>
+    </div>
+
+    <div style="padding: 16px 16px 0;">
+      <div style="font-family:'DM Serif Display',serif;font-size:22px;color:var(--purple);">Adote um Idoso</div>
+      <div style="font-size:13px;color:var(--text-soft);margin-bottom:4px;">Conheça nossos idosos e escolha quem você gostaria de ajudar</div>
+    </div>
+
+    <div class="search-bar">
+      <div class="search-input-wrap">
+        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" placeholder="Buscar por nome ou condição..." oninput="filterElders(this.value)">
+      </div>
+    </div>
+
+    <div class="elder-list" id="elder-list"></div>
+  </div>
+
+  <!-- ══════════════════════════════════════ -->
+  <!-- SCREEN: ELDER DETAIL                   -->
+  <!-- ══════════════════════════════════════ -->
+  <div class="screen" id="screen-elder-detail">
+    <div class="topbar">
+      <button class="topbar-back" onclick="goBack('screen-adopt-list')">
+        <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+        Voltar
+      </button>
+      <div class="topbar-logo">
+        <div class="icon-heart">
+          <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        </div>
+        IdoCare
+      </div>
+      <div style="width:60px;"></div>
+    </div>
+    <div id="elder-detail-content"></div>
+  </div>
+
+  <!-- ══════════════════════════════════════ -->
+  <!-- SCREEN: HELP ASILO                     -->
+  <!-- ══════════════════════════════════════ -->
+  <div class="screen" id="screen-help">
+    <div class="topbar">
+      <button class="topbar-back" onclick="goBack('screen-menu')">
+        <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+        Voltar
+      </button>
+      <div class="topbar-logo">
+        <div class="icon-heart">
+          <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        </div>
+        IdoCare
+      </div>
+      <div style="width:60px;"></div>
+    </div>
+
+    <div class="help-header px-16">
+      <div class="help-title">Ajudar o Asilo</div>
+      <div class="help-sub">Escolha como você gostaria de contribuir para o bem-estar de todos os nossos idosos</div>
+      <div class="tab-row-alt" id="help-tabs">
+        <button class="tab-btn active" id="help-tab-pix" onclick="switchHelpTab('pix')">
+          <svg style="width:13px;height:13px;stroke:currentColor;fill:none;vertical-align:-2px;margin-right:4px;" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 9h1v1H9z M14 9h1v1h-1z M9 14h1v1H9z M14 14h1v1h-1z"/></svg>
+          Doação PIX
+        </button>
+        <button class="tab-btn" id="help-tab-items" onclick="switchHelpTab('items')">
+          📦 Doação de Itens
+        </button>
+      </div>
+    </div>
+
+    <div id="help-pix-section">
+      <div class="pix-card">
+        <div class="pix-card-title">Doação via PIX</div>
+        <div class="pix-card-sub">Faça sua doação diretamente para a conta do asilo usando PIX</div>
+        <div class="qr-placeholder">
+          <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><path d="M14 14h1v1h-1z M17 14h1v1h-1z M20 14h1v1h-1z M14 17h1v1h-1z M17 17h1v1h-1z M20 17h1v1h-1z M14 20h1v1h-1z M20 20h1v1h-1z"/></svg>
+        </div>
+        <div style="text-align:center;font-size:12px;color:var(--text-soft);margin-bottom:12px;">ou copie a chave PIX</div>
+        <div class="pix-key-row">
+          <span class="pix-key">idocare.asilo@exemplo.com</span>
+          <button class="copy-btn" onclick="copyPix()">
+            <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          </button>
+        </div>
+        <label class="anon-check">
+          <input type="checkbox"> <span>Fazer doação anônima</span>
+        </label>
+        <div class="info-box">
+          <p>Sua doação será utilizada para melhorias na estrutura do asilo, compra de equipamentos, medicamentos e alimentos para todos os nossos idosos.</p>
+        </div>
+      </div>
+    </div>
+
+    <div id="help-items-section" style="display:none; padding-bottom: 24px;">
+      <div style="padding:0 16px 12px;">
+        <p style="font-size:13px;color:var(--text-soft);">Doe itens essenciais que nossos idosos precisam:</p>
+      </div>
+      <div class="items-grid">
+        <div class="item-row">
+          <div class="item-row-left">
+            <div class="item-icon">🍎</div>
+            <div>
+              <div class="item-name">Alimentos</div>
+              <div class="item-sub">Frutas, legumes, grãos</div>
+            </div>
+          </div>
+          <button class="item-donate-btn" onclick="showToast('Obrigado pela sua doação de alimentos! 💜')">Doar</button>
+        </div>
+        <div class="item-row">
+          <div class="item-row-left">
+            <div class="item-icon">👕</div>
+            <div>
+              <div class="item-name">Roupas</div>
+              <div class="item-sub">Agasalhos, roupas íntimas</div>
+            </div>
+          </div>
+          <button class="item-donate-btn" onclick="showToast('Obrigado pela sua doação de roupas! 💜')">Doar</button>
+        </div>
+        <div class="item-row">
+          <div class="item-row-left">
+            <div class="item-icon">💊</div>
+            <div>
+              <div class="item-name">Medicamentos</div>
+              <div class="item-sub">Vitaminas, analgésicos</div>
+            </div>
+          </div>
+          <button class="item-donate-btn" onclick="showToast('Obrigado pela sua doação de medicamentos! 💜')">Doar</button>
+        </div>
+        <div class="item-row">
+          <div class="item-row-left">
+            <div class="item-icon">🛁</div>
+            <div>
+              <div class="item-name">Higiene</div>
+              <div class="item-sub">Sabonetes, shampoo, fraldas</div>
+            </div>
+          </div>
+          <button class="item-donate-btn" onclick="showToast('Obrigado pela sua doação! 💜')">Doar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════ -->
+  <!-- SCREEN: SCHEDULE                       -->
+  <!-- ══════════════════════════════════════ -->
+  <div class="screen" id="screen-schedule">
+    <div class="topbar">
+      <button class="topbar-back" onclick="goBack('screen-menu')">
+        <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+        Voltar
+      </button>
+      <div class="topbar-logo">
+        <div class="icon-heart">
+          <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        </div>
+        IdoCare
+      </div>
+      <div style="width:60px;"></div>
+    </div>
+
+    <div class="schedule-header px-16">
+      <div class="schedule-title">Agendar Visita</div>
+      <div class="schedule-sub">Agende um horário para visitar nossos idosos e trazer alegria ao dia deles</div>
+    </div>
+
+    <div class="calendar-card">
+      <div class="cal-label">Selecione a Data</div>
+      <div class="cal-nav">
+        <button class="cal-nav-btn" onclick="changeMonth(-1)"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></button>
+        <div class="cal-month" id="cal-month-label">Abril 2026</div>
+        <button class="cal-nav-btn" onclick="changeMonth(1)"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></button>
+      </div>
+      <div class="cal-grid" id="cal-grid"></div>
+    </div>
+
+    <div class="visit-form">
+      <div class="visit-form-title">Detalhes da Visita</div>
+
+      <label style="font-size:13px;font-weight:500;color:var(--text);display:block;margin-bottom:5px;">Idoso a visitar (opcional)</label>
+      <select class="select-field">
+        <option value="">Visita geral ao asilo</option>
+        <option>Maria Silva – 78 anos</option>
+        <option>João Santos – 82 anos</option>
+        <option>Ana Oliveira – 75 anos</option>
+        <option>Carlos Pereira – 88 anos</option>
+      </select>
+
+      <label style="font-size:13px;font-weight:500;color:var(--text);display:block;margin-bottom:5px;">Horário</label>
+      <select class="select-field">
+        <option value="">Selecione um horário</option>
+        <option>09:00</option>
+        <option>10:00</option>
+        <option>11:00</option>
+        <option>14:00</option>
+        <option>15:00</option>
+        <option>16:00</option>
+      </select>
+
+      <label class="anon-check-visit">
+        <input type="checkbox">
+        <span>Visita anônima (não revelar meu nome ao idoso)</span>
+      </label>
+
+      <button class="btn-primary" onclick="confirmSchedule()">Confirmar Agendamento</button>
+    </div>
+
+    <div class="info-card">
+      <div class="info-card-title">Informações Importantes</div>
+      <ul>
+        <li>As visitas têm duração de 1 hora</li>
+        <li>É recomendado trazer um presente simbólico (frutas, flores, revistas)</li>
+        <li>Respeite as orientações da equipe do asilo</li>
+        <li>Confirme sua presença com antecedência em caso de imprevistos</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════ -->
+  <!-- SCREEN: CONFIRMATION                   -->
+  <!-- ══════════════════════════════════════ -->
+  <div class="screen" id="screen-confirm">
+    <div class="confirm-icon">
+      <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+    </div>
+    <div class="confirm-title" id="confirm-title">Agendamento Confirmado!</div>
+    <div class="confirm-sub" id="confirm-sub">Sua visita foi agendada com sucesso. Os idosos ficaram muito felizes em saber que alguém virá visitá-los!</div>
+    <button class="btn-primary" style="max-width:260px;" onclick="goBack('screen-menu')">Voltar ao Início</button>
+    <div style="margin-top:12px;">
+      <button class="btn-secondary" style="max-width:260px;" onclick="navigate('screen-schedule')">Agendar Outra Visita</button>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast"></div>
+
+</div><!-- /phone -->
+
+<script>
+// ── DATA ──────────────────────────────────────────────
+const elders = [
+  {
+    id: 1, emoji: '👩‍🦳', name: 'Maria Silva', age: 78,
+    bio: 'Dona Maria é uma senhora alegre e carinhosa. Precisa de acompanhamento diário para suas medicações e cuidados especiais com alimentação.',
+    conditions: [{label:'Hipertensão',color:'red'},{label:'Diabetes tipo 2',color:'red'},{label:'Artrite',color:'blue'}],
+    meds: ['Losartana 50mg','Metformina 850mg','Ibuprofeno 400mg'],
+    needs: [{label:'Medidor de glicose',color:'purple'},{label:'Medicamentos',color:'purple'},{label:'Cadeira de rodas',color:'blue'}],
+    adopted: false
+  },
+  {
+    id: 2, emoji: '👴', name: 'João Santos', age: 82,
+    bio: 'Seu João é um ex-professor aposentado que adora conversar sobre história. Sofre de Alzheimer inicial e precisa de visitas frequentes.',
+    conditions: [{label:'Alzheimer inicial',color:'red'},{label:'Problemas cardíacos',color:'red'}],
+    meds: ['Donepezila 10mg','Atenolol 25mg','Aspirina 100mg'],
+    needs: [{label:'Acompanhamento psicológico',color:'purple'},{label:'Medicamentos',color:'purple'},{label:'Livros',color:'green'}],
+    adopted: false
+  },
+  {
+    id: 3, emoji: '👩‍🦱', name: 'Ana Oliveira', age: 75,
+    bio: 'Dona Ana é uma costureira aposentada muito criativa. Gosta de artesanato e precisa de companhia para não se sentir sozinha.',
+    conditions: [{label:'Depressão leve',color:'blue'},{label:'Osteoporose',color:'red'}],
+    meds: ['Fluoxetina 20mg','Cálcio + Vitamina D','Clonazepam 0.5mg'],
+    needs: [{label:'Material de artesanato',color:'green'},{label:'Companhia',color:'purple'},{label:'Medicamentos',color:'purple'}],
+    adopted: true
+  },
+  {
+    id: 4, emoji: '👴🏿', name: 'Carlos Pereira', age: 88,
+    bio: 'Seu Carlos é o idoso mais velho do asilo e um ex-músico. Adora quando alguém toca violão para ele. Precisa de cuidados de mobilidade.',
+    conditions: [{label:'Parkinson',color:'red'},{label:'Catarata',color:'blue'}],
+    meds: ['Levodopa 250mg','Colirio especial','Vitamina B12'],
+    needs: [{label:'Cadeira de rodas motorizada',color:'purple'},{label:'Óculos novos',color:'blue'},{label:'Visitas musicais',color:'green'}],
+    adopted: false
+  }
+];
+
+// ── NAVIGATION ────────────────────────────────────────
+let currentScreen = 'screen-auth';
+
+function navigate(id) {
+  document.getElementById(currentScreen).classList.remove('active','back-anim');
+  const next = document.getElementById(id);
+  next.classList.remove('back-anim');
+  next.classList.add('active');
+  next.scrollTop = 0;
+  currentScreen = id;
+}
+
+function goBack(id) {
+  document.getElementById(currentScreen).classList.remove('active','back-anim');
+  const prev = document.getElementById(id);
+  prev.classList.add('back-anim','active');
+  prev.scrollTop = 0;
+  currentScreen = id;
+}
+
+// ── AUTH ──────────────────────────────────────────────
+function switchTab(tab) {
+  document.getElementById('form-login').style.display = tab === 'login' ? 'block' : 'none';
+  document.getElementById('form-cadastro').style.display = tab === 'cadastro' ? 'block' : 'none';
+  document.getElementById('tab-login').classList.toggle('active', tab === 'login');
+  document.getElementById('tab-cadastro').classList.toggle('active', tab === 'cadastro');
+}
+
+function doLogin() {
+  const email = document.getElementById('login-email').value.trim();
+  const senha = document.getElementById('login-senha').value;
+  if (!email || !senha) { showToast('Preencha email e senha.'); return; }
+  document.getElementById('menu-user-label').textContent = email.split('@')[0];
+  renderElders(elders);
+  navigate('screen-menu');
+}
+
+function doCadastro() {
+  const nome = document.getElementById('cad-nome').value.trim();
+  const email = document.getElementById('cad-email').value.trim();
+  const senha = document.getElementById('cad-senha').value;
+  if (!nome || !email || !senha) { showToast('Preencha todos os campos.'); return; }
+  document.getElementById('menu-user-label').textContent = nome.split(' ')[0];
+  renderElders(elders);
+  navigate('screen-menu');
+}
+
+function goAnon() {
+  document.getElementById('menu-user-label').textContent = 'Anônimo';
+  renderElders(elders);
+  navigate('screen-menu');
+}
+
+// ── ELDERS ────────────────────────────────────────────
+function renderElders(list) {
+  const container = document.getElementById('elder-list');
+  container.innerHTML = list.map(e => `
+    <div class="elder-card-wrap">
+      <div class="elder-card" onclick="openElder(${e.id})">
+        <div class="elder-card-img">${e.emoji}</div>
+        <div class="elder-card-body">
+          <div class="elder-card-name">${e.name}</div>
+          <div class="elder-card-age">${e.age} anos</div>
+          <div style="font-size:11px;color:var(--text-soft);margin-bottom:4px;">Sintomas:</div>
+          <div class="tags">${e.conditions.slice(0,2).map(c=>`<span class="tag ${c.color}">${c.label}</span>`).join('')}${e.conditions.length>2?`<span class="tag blue">+${e.conditions.length-2}</span>`:''}</div>
+          <div style="font-size:11px;color:var(--text-soft);margin-bottom:4px;">Necessidades:</div>
+          <div class="tags">${e.needs.slice(0,2).map(n=>`<span class="tag ${n.color}">${n.label}</span>`).join('')}${e.needs.length>2?`<span class="tag purple">+${e.needs.length-2}</span>`:''}</div>
+          <button class="btn-detail" onclick="event.stopPropagation();openElder(${e.id})">Ver Detalhes</button>
+        </div>
+        ${e.adopted ? '<div class="elder-adopted-badge">✓ Adotado</div>' : ''}
+      </div>
+    </div>
+  `).join('');
+}
+
+function filterElders(q) {
+  const filtered = q
+    ? elders.filter(e =>
+        e.name.toLowerCase().includes(q.toLowerCase()) ||
+        e.conditions.some(c => c.label.toLowerCase().includes(q.toLowerCase()))
+      )
+    : elders;
+  renderElders(filtered);
+}
+
+function openElder(id) {
+  const e = elders.find(x => x.id === id);
+  document.getElementById('elder-detail-content').innerHTML = `
+    <div class="elder-hero">${e.emoji}</div>
+    <div class="elder-detail-body">
+      <div class="elder-detail-name">${e.name}</div>
+      <div class="elder-detail-age">${e.age} anos</div>
+      <div class="elder-bio">${e.bio}</div>
+
+      <div class="detail-section">
+        <div class="section-title">
+          <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          Sintomas e Condições
+        </div>
+        <div class="tags">${e.conditions.map(c=>`<span class="tag ${c.color}">${c.label}</span>`).join('')}</div>
+      </div>
+
+      <div class="detail-section">
+        <div class="section-title">
+          <svg viewBox="0 0 24 24"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+          Medicações
+        </div>
+        <ul class="med-list">${e.meds.map(m=>`<li>${m}</li>`).join('')}</ul>
+      </div>
+
+      <div class="detail-section">
+        <div class="section-title">
+          <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          Necessidades
+        </div>
+        <div class="tags">${e.needs.map(n=>`<span class="tag ${n.color}">${n.label}</span>`).join('')}</div>
+      </div>
+
+      <button class="btn-primary" onclick="adoptElder(${e.id})" id="adopt-btn-${e.id}">
+        ${e.adopted ? '✓ Já Adotado' : `Adotar ${e.name.split(' ')[0]}`}
+      </button>
+    </div>
+  `;
+  navigate('screen-elder-detail');
+}
+
+function adoptElder(id) {
+  const e = elders.find(x => x.id === id);
+  e.adopted = true;
+  renderElders(elders);
+  document.getElementById('confirm-title').textContent = `Você adotou ${e.name.split(' ')[0]}! 💜`;
+  document.getElementById('confirm-sub').textContent = `Obrigado por fazer a diferença na vida de ${e.name}! Em breve a equipe do asilo entrará em contato com você.`;
+  navigate('screen-confirm');
+}
+
+// ── HELP ──────────────────────────────────────────────
+function switchHelpTab(tab) {
+  document.getElementById('help-pix-section').style.display = tab === 'pix' ? 'block' : 'none';
+  document.getElementById('help-items-section').style.display = tab === 'items' ? 'block' : 'none';
+  document.getElementById('help-tab-pix').classList.toggle('active', tab === 'pix');
+  document.getElementById('help-tab-items').classList.toggle('active', tab === 'items');
+}
+
+function copyPix() {
+  navigator.clipboard.writeText('idocare.asilo@exemplo.com').catch(()=>{});
+  showToast('Chave PIX copiada! 📋');
+}
+
+// ── CALENDAR ──────────────────────────────────────────
+const months = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+let calYear = 2026, calMonth = 3, selectedDay = null;
+
+function renderCal() {
+  document.getElementById('cal-month-label').textContent = `${months[calMonth]} ${calYear}`;
+  const grid = document.getElementById('cal-grid');
+  const dayNames = ['Do','Se','Te','Qu','Qu','Se','Sá'];
+  let html = dayNames.map(d=>`<div class="cal-day-name">${d}</div>`).join('');
+  const first = new Date(calYear, calMonth, 1).getDay();
+  const days = new Date(calYear, calMonth+1, 0).getDate();
+  const prevDays = new Date(calYear, calMonth, 0).getDate();
+  for (let i=0; i<first; i++) html += `<div class="cal-day other">${prevDays-first+i+1}</div>`;
+  const today = new Date();
+  for (let d=1; d<=days; d++) {
+    const isToday = today.getDate()===d && today.getMonth()===calMonth && today.getFullYear()===calYear;
+    const isSel = selectedDay===d;
+    html += `<div class="cal-day${isToday?' today':''}${isSel?' selected':''}" onclick="selectDay(${d})">${d}</div>`;
+  }
+  grid.innerHTML = html;
+}
+
+function changeMonth(dir) {
+  calMonth += dir;
+  if (calMonth > 11) { calMonth = 0; calYear++; }
+  if (calMonth < 0) { calMonth = 11; calYear--; }
+  selectedDay = null;
+  renderCal();
+}
+
+function selectDay(d) {
+  selectedDay = d;
+  renderCal();
+}
+
+function confirmSchedule() {
+  if (!selectedDay) { showToast('Selecione uma data para a visita.'); return; }
+  document.getElementById('confirm-title').textContent = 'Visita Agendada! 🗓️';
+  document.getElementById('confirm-sub').textContent = `Sua visita para ${selectedDay} de ${months[calMonth]} foi confirmada. Os idosos estão ansiosos para te ver!`;
+  navigate('screen-confirm');
+}
+
+// ── TOAST ─────────────────────────────────────────────
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+// ── INIT ──────────────────────────────────────────────
+renderCal();
+</script>
+</body>
+</html>
